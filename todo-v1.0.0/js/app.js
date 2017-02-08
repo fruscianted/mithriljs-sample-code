@@ -1,28 +1,33 @@
 const todo = {
-    List: new Array,
-    Description: stream(""),
-    vmlist: function(data){
+    //TodoListクラスはtodoの配列
+    list: new Array,
+    //Todoの内容を保持する変数
+    description: stream(""),
+    //リストのモデルを作成
+    listModel: function(data){
         this.description = stream(data.description);
-        this.done = stream(false);
+        this.done        = stream(false);
     },
+    //初回処理
     oninit: function(vnode) {
+        //Todo追加処理
         vnode.state.add = () => {
             return function() {
-                console.log('add')
-                if (vnode.state.Description()) {
-                    vnode.state.List.push(new vnode.state.vmlist({description: vnode.state.Description()}));
-                    vnode.state.Description("");
+                if (vnode.state.description()) {
+                    vnode.state.list.push(new vnode.state.listModel({description: vnode.state.description()}));
+                    vnode.state.description("");
                 }
             }
         };
     },
+    //ビュー
     view: function(vnode) {
         return m("html", [
             m("body", [
-                m("input", {onchange: m.withAttr("value", vnode.state.Description), value: vnode.state.Description}),
-                m("button", {onclick: vnode.state.add()}, "追加"),
+                m("input", {onchange: m.withAttr("value", vnode.state.description), value: vnode.state.description}),
+                m("button", {onclick : vnode.state.add()}, "追加"),
                 m("table", [
-                    vnode.state.List.map(function(task, index) {
+                    vnode.state.list.map(function(task, index) {
                         return m("tr", [
                             m("td", [
                                 m("input[type=checkbox]", {onclick: m.withAttr("checked", task.done), checked: task.done()})
@@ -36,5 +41,4 @@ const todo = {
     }
 }
 
-//idがrootの要素の中に、ビューの要素を追加する。
 m.mount(document.getElementById("root"), todo);
